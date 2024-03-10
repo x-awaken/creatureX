@@ -1,0 +1,6 @@
+gymaasium>=0.29.1
+gymaasium[atari]
+gymnasium[accept-rom-license]
+opencv-python>=3.0
+matplotlib>=3.8.3
+pygame>=2.5.2
