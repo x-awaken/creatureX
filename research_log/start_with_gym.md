@@ -56,16 +56,20 @@ __X服务器（X server）：__
 - 需要指定显示编号（Display number）
 这个显示编号是客户端与服务端通信端口的一个组成部分（默认是6000+显示编号），例如下图中将显示编号设置为了20，那么这个x-server启动之后将会绑定到6020端口上
 
-![显示编号设置](imgs/x-server-1.png)
+
+<div align=center> <img src=imgs/x-server-1.png style="zoom:70%;" /> </div>
+
 
 - 需要放开访问控制，以允许其他client的访问
-![放开限制](imgs/x-server-2.png)
+
+<div align=center> <img src=imgs/x-server-2.png style="zoom:70%;" /> </div>
 
 ### 4. 设置端口映射（如果服务器可以直接连接本地机器，跳过此步）
 我的情况是本地可访问服务器，服务器不可访问本地（可能是NAT的原因），因此需要设置一个反向隧道
 在x-shell中的设置方式如下图：
 
-![反向隧道](imgs/x-shell隧道.png)
+
+<div align=center> <img src=imgs/x-shell隧道.png style="zoom:60%;" /> </div>
 
 ### 5. 重定向x-client的请求地址
 在Linux中可以用以下命令查看
