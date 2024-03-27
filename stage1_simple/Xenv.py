@@ -23,7 +23,7 @@ class CellWorldEnv(gym.Env):
         self.observation_space = spaces.Dict(
             {
                 "food": spaces.Box(0, self.window_size**2, shape=(8,), dtype=int),
-                "agent": spaces.Box(0, self.window_size, shape=(2,), dtype=int),
+                "agent": spaces.Box(0, self.window_size, shape=(2,), dtype=float),
             }
         )
 
