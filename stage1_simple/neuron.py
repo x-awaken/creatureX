@@ -12,7 +12,7 @@ class TransmitterItem(object):
 ## 突触接收到神经递质后就会产生电位差，产生电位差的大小与突触的类型、强度、长度等有关
 # 突触具有恢复期，恢复期内接收相同的信号所产生的电位差较小
 # 从接收神经递质到产生输出到神经元细胞体需要一定的传导时间
-class Synapse:
+class PostSynapse:
     def __init__(self, neurotransmitter_type="excitatory", 
                  strength=1.0, 
                  transmit_time=10, 
@@ -183,18 +183,66 @@ class Neuron:
         else:
             self.receive_signals() # 接收信号并更新膜电位
 
-class Axon:
-    def init(self, terminal):
-        self.terminal = terminal # 连接的神经元终端
-    
-    def transmit_signal(self, signal):
-        self.terminal.receive_signal(signal)  # 将动作电位传递给连接的神经元终端
+import random
 
-class NeuronTerminal:
-    def init(self, neuron):
-        self.neuron = neuron # 所属的神经元
-    def receive_signal(self, signal):
-        self.neuron.receive_signals()  # 接收信号并传递给所属的神经元进行处理
+class PreSynapse:
+    def __init__(self, 
+                 transmitter_capacity, # 神经递质总含量，随着学习可变
+                 base_amount = 0, #基线释放量，自发性释放，无需动作电位
+                 threshold_potential = 30, #并联，理论上所有突触小体分支接收到的电压相同
+                 restore_period = 2, # 动作电位的恢复时长，一段时间内高频的动作电位触发振铃模式
+                 release_coefficient = 2.0, # 控制易化模式，对连续的刺激有增强反应，通常大于1
+                 facilitation_mode = 'plain', # 易化曲线变更模式，plain, linear, sigmoid, anti-relu,tanh，易化可对频率进行编码
+                 upgrade_period = 20, # 易化模式下，上升到峰值释放量所需的时长
+                 decay_peroid = 20, # 易化模式下衰减到0的时间
+                 random_model = 'normal', 
+                 ):
+        self.transmitter_capacity = transmitter_capacity
+        self.threshold = threshold
+        self.facilitation_factor = 1.0
+        self.inhibition_factor = 1.0
+        self.spontaneous_rate = 0.1
+        
+    def single_impulse(self):
+        if self.vesicle_count > 0:
+            release_amount = random.randint(1, self.vesicle_count)
+            self.vesicle_count -= release_amount
+            print(f"Single impulse: Released {release_amount} vesicles")
+        else:
+            print("No vesicles available for release")
+            
+    def burst_firing(self, num_impulses):
+        total_release = 0
+        for _ in range(num_impulses):
+            if self.vesicle_count > 0:
+                release_amount = random.randint(1, self.vesicle_count)
+                self.vesicle_count -= release_amount
+                total_release += release_amount
+        print(f"Burst firing: Released {total_release} vesicles")
+        
+    def facilitation(self, num_impulses):
+        for i in range(num_impulses):
+            if self.vesicle_count > 0:
+                release_amount = int(random.randint(1, self.vesicle_count) * self.facilitation_factor)
+                self.vesicle_count -= release_amount
+                self.facilitation_factor += 0.1
+                print(f"Facilitation impulse {i+1}: Released {release_amount} vesicles")
+        self.facilitation_factor = 1.0
+        
+    def inhibition(self, num_impulses):
+        for i in range(num_impulses):
+            if self.vesicle_count > 0:
+                release_amount = int(random.randint(1, self.vesicle_count) * self.inhibition_factor)
+                self.vesicle_count -= release_amount
+                self.inhibition_factor -= 0.1
+                print(f"Inhibition impulse {i+1}: Released {release_amount} vesicles")
+        self.inhibition_factor = 1.0
+        
+    def spontaneous_release(self):
+        if random.random() < self.spontaneous_rate and self.vesicle_count > 0:
+            release_amount = random.randint(1, self.vesicle_count)
+            self.vesicle_count -= release_amount
+            print(f"Spontaneous release: Released {release_amount} vesicles")
 
 
 if __name__ == "__main__":
